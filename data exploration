@@ -1,0 +1,90 @@
+# Get the Data
+
+volcano <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/volcano.csv')
+eruptions <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/eruptions.csv')
+events <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/events.csv')
+tree_rings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/tree_rings.csv')
+sulfur <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/sulfur.csv')
+
+sapply(sulfur, function(x) sum(is.na(x)))
+
+#CLEANED FINISH: ERUPTIONS AND SULFUR
+#DISCARDED TREE RING IDGI
+#EVENTS CAN FOLLOW WHAT ERUPTIONS DID AND COMBINE, event type is important and interesting
+table(events$event_type)
+
+
+
+#frequency: avg num per time 
+#number of eruption grouped by volcano number, joint with 
+no_of_erup=eruptions%>%group_by(volcano_number)%>%summarize(n=n())
+#cleaning
+volcano=volcano%>%select(-('major_rock_3':'minor_rock_5'))
+summary(volcano)
+volcano=mutate(volcano,
+               population_within_5_km=as.numeric(population_within_5_km))
+sapply(vocalno.c,function(x) table(x))
+
+#Number of eruption 
+no_of_erup%>%inner_join(volcano,key=volcano_number)
+vocalno.c=select_if(volcano,function(x) class(x)=='character')
+volcano.join=inner_join(volcano,no_of_erup)
+ggplot(data=no_of_erup,aes(x=n))+geom_histogram()
+
+#Explore the effect of tectonic plating over number of eruption
+tect.erup=volcano.join%>%group_by(tectonic_settings)%>%summarize(n=sum(n))
+ggplot(tect.erup,aes(tectonic_settings))+geom_bar(aes(weight=n))
+
+
+
+
+#population has no empty data
+summary(volcano$population_within_100_km)
+table(volcano$major_rock_1)
+summary(volcano$population_within_10_km)
+sum(is.na(volcano$population_within_30_km))
+
+#ERUPTIONS 
+
+
+head(eruptions)
+nrow(eruptions)
+table(eruptions$evidence_method_dating)
+#eruption_number should be primary key, 2 duplicate row removed
+nrow(distinct(eruptions,eruption_number))
+distinct.erup=distinct(eruptions,eruption_number,.keep_all = 1)
+a=eruptions%>%setdiff(distinct.erup)
+eruptions=distinct.erup
+#volcano eruptions is not distinct, one volcano can eruption multiple times
+distinct(eruptions,volcano_number)
+#some data dont have vei value
+table(eruptions$vei)
+sum(is.na(eruptions$vei))
+#DELETING the columns that are not of concern
+eruptions=eruptions%>%select(-c(area_of_activity,eruption_category,evidence_method_dating))
+eruptions=eruptions %>%drop_na(start_day)
+#time series, number of euptions over the year 
+ggplot(data=eruptions,aes(x=start_year))+geom_histogram(binwidth=10)
+recent_erup=eruptions%>%filter(start_year>1000)
+ggplot(data=recent_erup,aes(x=start_year))+geom_density(alpha=0.0001)+geom_histogram(binwidth=10)
+
+#attempt to see if there is correlation between duration of eruption and vei
+#converting start and end into date object 
+b=eruptions%>%unite(col=start_year,start_year,start_month,start_day,sep='/')
+b=b%>%unite(col=end_year,end_year,end_month,end_day,sep='/')
+#checking through the rows that doesnt have full data
+error=b[which(is.na(ym(b$start_year))),]
+#decided to drop the incomplete date row and vei
+duration=b%>%mutate(start=ymd(start_year))%>%drop_na(start)
+duration=duration%>%mutate(end=ymd(end_year))%>%drop_na(end)
+sum(is.na(duration$vei))
+duration=duration%>%drop_na(vei)
+#obtain duration in days, plot against vei, check through duration values and the outlier
+duration=duration%>%mutate(time=as.numeric(difftime(end, start, units = "days")))
+ggplot(duration,aes(x=vei,y=time))+geom_point()
+summary(duration$time)
+debug=eruptions%>%filter(volcano_name=='Yasur')
+
+#SULFUR
+sulfur=sulfur%>%gather('neem','wdc',key='area',value='amount')
+ggplot(data=sulfur,aes(x=year,y=amount,color=area))+geom_line()
