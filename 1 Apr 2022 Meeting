@@ -1,0 +1,29 @@
+To Do:
+- check what eruption_category affects (whether to remove uncertain eruption) [explain our decision]
+- bottom 500 volcs 
+    -- top 100, bottom 100 
+    -- volc in ocean -> remove those w no pop at all zero [Q2(b) MF]
+- plot volcano colours on map by zones, not by crust type [Q? DONE by MF]
+- how frequent do volcs erupt (sort by types) [Q1(a) Yian]
+- General stages of eruptions/activity according to event type [Q1(b) Caleb]
+- effects of eruption (sulfur) - could be affected by no. eruptions/ type of volcanoes that erupted [Q1(c) Reb,Yian]
+- ave vei, group by volc, to check if vei is affected by major rocks in general [Q2(a) Rena]
+- 3 simple ones on population agaisnt volc type (just to see) [Reb]
+    --  population (5km) agaisnt volc type
+    --  population (10km) agaisnt volc type
+    --  population (30km) agaisnt volc type
+
+
+1. frequency of volcano eruptions and its different stages affect the sulfur level in air
+
+a) group by volcano type and check the frequnecy of eruptions to see which volcano type is more prone to erupt [Yian]
+
+b) common stages across volcanic eruptions by eruption number [Caleb]
+
+c) effects of sulfur and volcano eruption activity [Reb, Yian]
+
+2. average vei of different volcanoes determines the major rock type and how they are seen across the various distances from volcanoes
+
+a) average vei of different volcanoes determines the major rock type {ack) [Rena]
+
+b) major rocks types of top 500 volcanoes at 5km (check other radius) [MF]
